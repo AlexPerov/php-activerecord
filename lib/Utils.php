@@ -367,5 +367,6 @@ class Utils
 	{
 		self::$irregular[$singular] = $plural;
 	}
-};
-?>
+
+}
+
