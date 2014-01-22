@@ -14,6 +14,8 @@ class PgsqlAdapter extends Connection
 	static $QUOTE_CHARACTER = '"';
 	static $DEFAULT_PORT = 5432;
 
+	private $transaction_level = 0;
+
 	public function supports_sequences()
 	{
 		return true;
@@ -142,5 +144,43 @@ SQL;
 		else
 			return "1";
 	}
+
+	private function wrap_pdo_transaction($method, $sql)
+	{
+		if ($this->transaction_level === 0) {
+			if (!$this->connection->$method())
+				throw new DatabaseException($this);
+		} else {
+			$this->connection->exec($sql);
+		}
+	}
+
+	/**
+	 * Starts a transaction.
+	 */
+	public function transaction()
+	{
+		$this->wrap_pdo_transaction('beginTransaction', 'SAVEPOINT LEVEL'.$this->transaction_level);
+		$this->transaction_level++;
+	}
+
+	/**
+	 * Commits the current transaction.
+	 */
+	public function commit()
+	{
+		$this->transaction_level--;
+		$this->wrap_pdo_transaction('commit', 'RELEASE SAVEPOINT LEVEL'.$this->transaction_level);
+	}
+
+	/**
+	 * Rollback a transaction.
+	 */
+	public function rollback()
+	{
+		$this->transaction_level--;
+		$this->wrap_pdo_transaction('rollback', 'ROLLBACK TO SAVEPOINT LEVEL'.$this->transaction_level);
+	}
+
 }
 ?>
