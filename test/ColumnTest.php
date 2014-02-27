@@ -88,6 +88,8 @@ class ColumnTest extends SnakeCase_PHPUnit_Framework_TestCase
 		$this->assert_cast(Column::STRING,'bubble tea','bubble tea');
 		$this->assert_cast(Column::BOOLEAN,$this->conn->boolean_to_string(true),true);
 		$this->assert_cast(Column::BOOLEAN,$this->conn->boolean_to_string(false),false);
+		$this->assert_cast(Column::INTEGER,4294967295,'4294967295');
+		$this->assert_cast(Column::INTEGER,'18446744073709551615','18446744073709551615');
 	}
 
 	public function test_cast_leave_null_alone()
