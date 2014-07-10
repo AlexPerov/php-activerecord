@@ -14,6 +14,8 @@ class PgsqlAdapter extends Connection
 	static $QUOTE_CHARACTER = '"';
 	static $DEFAULT_PORT = 5432;
 
+  static $datetime_format = 'Y-m-d H:i:s';
+
 	private $transaction_level = 0;
 
 	public function supports_sequences()
