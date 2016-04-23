@@ -463,9 +463,9 @@ class Model
 		if ($value instanceof \DateTime)
 			$value = new DateTime($value->format('Y-m-d H:i:s e'));
 
-		// make sure DateTime values know what model they belong to so
-		// dirty stuff works when calling set methods on the DateTime object
-		if ($value instanceof DateTime)
+		if ($value instanceof DateTimeInterface)
+			// Tell the Date object that it's associated with this model and attribute. This is so it
+			// has the ability to flag this model as dirty if a field in the Date object changes.
 			$value->attribute_of($this,$name);
 
 		$this->attributes[$name] = $value;
